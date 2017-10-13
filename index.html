@@ -1,0 +1,48 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<div id="app">
+    <div class="messages">
+        <p v-for="message in messages">{{ message }}</p>
+    </div>
+    <div>
+        <input v-model="msg" @keyup.enter="sendMsg">
+        <input type="button" value="Send" @click="sendMsg">
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.0/vue.min.js"></script>
+
+<script>
+    var socket = io();
+
+    new Vue({
+        el: '#app',
+        data: {
+            msg: '',
+            messages: []
+        },
+        created: function () {
+            socket.on('chat.message', function (message) {
+                this.messages.push(message);
+            }.bind(this));
+        },
+        methods: {
+            sendMsg: function () {
+                socket.emit('chat.message', this.msg);
+                this.msg = '';
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
